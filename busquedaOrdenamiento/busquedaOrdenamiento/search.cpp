@@ -1,42 +1,40 @@
 #include "search.h"
+#include <iostream>
 
-int busquedaSecuencial(int arreglo[], int n, int valor)
+using namespace std;
+
+int busquedaSecuencial(int arreglo[], int n, int valor, bool verbose)
 {
-    int i;
-
-    for (i = 0; i < n; i++)
+    // 0/ Recorre todo el arreglo comparando elemento por elemento
+    for (int i = 0; i < n; i++)
     {
+        if (verbose)
+            cout << "[Secuencial] i=" << i << " comparo " << arreglo[i] << " con " << valor << "\n";
+
         if (arreglo[i] == valor)
-        {
-            return i;  // devuelve posición
-        }
+            return i; // 0/ encontrado
     }
 
-    return -1; // no encontrado
+    return -1; // 0/ no encontrado
 }
 
-int busquedaBinaria(int arreglo[], int n, int valor)
+int busquedaBinaria(int arreglo[], int n, int valor, bool verbose)
 {
+    // 0/ Busca dividiendo el rango (requiere arreglo ordenado)
     int izquierda = 0;
     int derecha = n - 1;
-    int medio;
 
     while (izquierda <= derecha)
     {
-        medio = (izquierda + derecha) / 2;
+        int medio = (izquierda + derecha) / 2;
 
-        if (arreglo[medio] == valor)
-        {
-            return medio;
-        }
-        else if (arreglo[medio] < valor)
-        {
-            izquierda = medio + 1;
-        }
-        else
-        {
-            derecha = medio - 1;
-        }
+        if (verbose)
+            cout << "[Binaria] izq=" << izquierda << " der=" << derecha
+                 << " medio=" << medio << " valMedio=" << arreglo[medio] << "\n";
+
+        if (arreglo[medio] == valor) return medio;
+        else if (arreglo[medio] < valor) izquierda = medio + 1;
+        else derecha = medio - 1;
     }
 
     return -1;

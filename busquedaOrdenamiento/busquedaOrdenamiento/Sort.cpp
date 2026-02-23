@@ -1,145 +1,197 @@
 #include "sort.h"
+#include <iostream>
+#include <vector>
 
-void ordenarBurbuja(int arreglo[], int n)
+using namespace std;
+
+// 0/ Imprime el arreglo (usado en verbose)
+static void imprimir(int arreglo[], int n)
 {
-    int i, j, temp;
+    for (int i = 0; i < n; i++) cout << arreglo[i] << " ";
+    cout << "\n";
+}
 
-    for (i = 0; i < n - 1; i++)
+void ordenarBurbuja(int arreglo[], int n, bool verbose)
+{
+    // 0/ Burbuja: compara vecinos e intercambia si est谩n en orden incorrecto
+    for (int i = 0; i < n - 1; i++)
     {
-        for (j = 0; j < n - 1 - i; j++)
+        for (int j = 0; j < n - 1 - i; j++)
         {
+            if (verbose)
+                cout << "[Burbuja] comparo a[" << j << "]=" << arreglo[j]
+                     << " con a[" << (j + 1) << "]=" << arreglo[j + 1] << "\n";
+
             if (arreglo[j] > arreglo[j + 1])
             {
-                temp = arreglo[j];
+                int temp = arreglo[j];
                 arreglo[j] = arreglo[j + 1];
                 arreglo[j + 1] = temp;
+
+                if (verbose)
+                {
+                    cout << "  swap -> ";
+                    imprimir(arreglo, n);
+                }
             }
         }
     }
 }
 
-void ordenarSeleccion(int arreglo[], int n)
+void ordenarSeleccion(int arreglo[], int n, bool verbose)
 {
-    int i, j, min, temp;
-
-    for (i = 0; i < n - 1; i++)
+    // 0/ Selecci贸n: encuentra el m铆nimo del resto y lo pone en su posici贸n
+    for (int i = 0; i < n - 1; i++)
     {
-        min = i;
+        int minIdx = i;
 
-        for (j = i + 1; j < n; j++)
+        for (int j = i + 1; j < n; j++)
         {
-            if (arreglo[j] < arreglo[min])
-            {
-                min = j;
-            }
+            if (verbose)
+                cout << "[Seleccion] comparo a[" << j << "]=" << arreglo[j]
+                     << " con a[" << minIdx << "]=" << arreglo[minIdx] << "\n";
+
+            if (arreglo[j] < arreglo[minIdx]) minIdx = j;
         }
 
-        temp = arreglo[i];
-        arreglo[i] = arreglo[min];
-        arreglo[min] = temp;
+        if (minIdx != i)
+        {
+            int temp = arreglo[i];
+            arreglo[i] = arreglo[minIdx];
+            arreglo[minIdx] = temp;
+
+            if (verbose)
+            {
+                cout << "  swap i=" << i << " con minIdx=" << minIdx << " -> ";
+                imprimir(arreglo, n);
+            }
+        }
     }
 }
 
-void ordenarInsercion(int arreglo[], int n)
+void ordenarInsercion(int arreglo[], int n, bool verbose)
 {
-    int i, j, clave;
-
-    for (i = 1; i < n; i++)
+    // 0/ Inserci贸n: toma una "clave" y la inserta en la parte ordenada
+    for (int i = 1; i < n; i++)
     {
-        clave = arreglo[i];
-        j = i - 1;
+        int clave = arreglo[i];
+        int j = i - 1;
+
+        if (verbose) cout << "[Insercion] clave=" << clave << "\n";
 
         while (j >= 0 && arreglo[j] > clave)
         {
+            if (verbose)
+                cout << "  muevo a[" << j << "]=" << arreglo[j] << " a posicion " << (j + 1) << "\n";
+
             arreglo[j + 1] = arreglo[j];
             j--;
         }
 
         arreglo[j + 1] = clave;
+
+        if (verbose)
+        {
+            cout << "  inserto clave en " << (j + 1) << " -> ";
+            imprimir(arreglo, n);
+        }
     }
 }
 
-void quickSort(int arreglo[], int izquierda, int derecha, int& comparaciones, int& intercambios)
+// 0/ QuickSort con indent para que se entienda la recursi贸n
+static void quickSortInterno(int arreglo[], int izquierda, int derecha,
+                             int& comparaciones, int& intercambios,
+                             bool verbose, int depth)
 {
     int i = izquierda;
     int j = derecha;
     int pivote = arreglo[(izquierda + derecha) / 2];
-    int temp;
+
+    if (verbose)
+    {
+        for (int k = 0; k < depth; k++) cout << "  ";
+        cout << "[Quick] rango " << izquierda << "-" << derecha << " pivote=" << pivote << "\n";
+    }
 
     while (i <= j)
     {
-        while (arreglo[i] < pivote)
-        {
-            i++;
-            comparaciones++;
-        }
-
-        while (arreglo[j] > pivote)
-        {
-            j--;
-            comparaciones++;
-        }
+        while (arreglo[i] < pivote) { i++; comparaciones++; }
+        while (arreglo[j] > pivote) { j--; comparaciones++; }
 
         if (i <= j)
         {
-            temp = arreglo[i];
+            int temp = arreglo[i];
             arreglo[i] = arreglo[j];
             arreglo[j] = temp;
             intercambios++;
 
+            if (verbose)
+            {
+                for (int k = 0; k < depth; k++) cout << "  ";
+                cout << "  swap i=" << i << " j=" << j << "\n";
+            }
+
             i++;
             j--;
         }
     }
 
-    if (izquierda < j)
-        quickSort(arreglo, izquierda, j, comparaciones, intercambios);
-
-    if (i < derecha)
-        quickSort(arreglo, i, derecha, comparaciones, intercambios);
+    if (izquierda < j) quickSortInterno(arreglo, izquierda, j, comparaciones, intercambios, verbose, depth + 1);
+    if (i < derecha)   quickSortInterno(arreglo, i, derecha, comparaciones, intercambios, verbose, depth + 1);
 }
 
-void merge(int arreglo[], int izquierda, int medio, int derecha, int& comparaciones)
+void quickSort(int arreglo[], int izquierda, int derecha, int& comparaciones, int& intercambios, bool verbose)
+{
+    // 0/ Wrapper para iniciar quicksort con profundidad 0
+    quickSortInterno(arreglo, izquierda, derecha, comparaciones, intercambios, verbose, 0);
+}
+
+// 0/ Merge seguro (sin temp[100]) + verbose
+static void merge(int arreglo[], int izquierda, int medio, int derecha, int& comparaciones, bool verbose)
 {
     int i = izquierda;
     int j = medio + 1;
-    int k = 0;
-    int temp[100];  // tama駉 fijo (sin memoria din醡ica)
+
+    vector<int> temp;
+    temp.reserve((derecha - izquierda + 1));
+
+    if (verbose)
+        cout << "[Merge] combino " << izquierda << "-" << medio << " con " << (medio + 1) << "-" << derecha << "\n";
 
     while (i <= medio && j <= derecha)
     {
         comparaciones++;
-
-        if (arreglo[i] <= arreglo[j])
-        {
-            temp[k++] = arreglo[i++];
-        }
-        else
-        {
-            temp[k++] = arreglo[j++];
-        }
+        if (arreglo[i] <= arreglo[j]) temp.push_back(arreglo[i++]);
+        else                          temp.push_back(arreglo[j++]);
     }
 
-    while (i <= medio)
-        temp[k++] = arreglo[i++];
+    while (i <= medio) temp.push_back(arreglo[i++]);
+    while (j <= derecha) temp.push_back(arreglo[j++]);
 
-    while (j <= derecha)
-        temp[k++] = arreglo[j++];
-
-    for (i = izquierda, k = 0; i <= derecha; i++, k++)
-        arreglo[i] = temp[k];
+    for (int k = 0; k < (int)temp.size(); k++)
+        arreglo[izquierda + k] = temp[k];
 }
 
-void mergeSort(int arreglo[], int izquierda, int derecha, int& comparaciones)
+static void mergeSortInterno(int arreglo[], int izquierda, int derecha, int& comparaciones, bool verbose, int depth)
 {
-    int medio;
+    if (izquierda >= derecha) return;
 
-    if (izquierda < derecha)
+    int medio = (izquierda + derecha) / 2;
+
+    if (verbose)
     {
-        medio = (izquierda + derecha) / 2;
-
-        mergeSort(arreglo, izquierda, medio, comparaciones);
-        mergeSort(arreglo, medio + 1, derecha, comparaciones);
-        merge(arreglo, izquierda, medio, derecha, comparaciones);
+        for (int k = 0; k < depth; k++) cout << "  ";
+        cout << "[MergeSort] divido " << izquierda << "-" << derecha << " -> "
+             << izquierda << "-" << medio << " y " << (medio + 1) << "-" << derecha << "\n";
     }
+
+    mergeSortInterno(arreglo, izquierda, medio, comparaciones, verbose, depth + 1);
+    mergeSortInterno(arreglo, medio + 1, derecha, comparaciones, verbose, depth + 1);
+    merge(arreglo, izquierda, medio, derecha, comparaciones, verbose);
+}
+
+void mergeSort(int arreglo[], int izquierda, int derecha, int& comparaciones, bool verbose)
+{
+    // 0/ Wrapper para iniciar mergeSort con profundidad 0
+    mergeSortInterno(arreglo, izquierda, derecha, comparaciones, verbose, 0);
 }

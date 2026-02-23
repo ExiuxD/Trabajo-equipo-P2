@@ -5,6 +5,7 @@ using namespace std;
 void mostrarMenu()
 {
     cout << "\n=== MENU ===\n";
+    cout << "0. Generar nuevo arreglo aleatorio\n";
     cout << "1. Busqueda Secuencial\n";
     cout << "2. Busqueda Binaria (ordena automaticamente)\n";
     cout << "3. Ordenar Arreglo\n";
@@ -14,13 +15,8 @@ void mostrarMenu()
 
 void mostrarArreglo(int arreglo[], int n)
 {
-    int i;
-
     cout << "\nArreglo: ";
-    for (i = 0; i < n; i++)
-    {
-        cout << arreglo[i] << " ";
-    }
+    for (int i = 0; i < n; i++) cout << arreglo[i] << " ";
     cout << endl;
 }
 
@@ -35,7 +31,6 @@ int pedirValor()
 int mostrarMenuOrdenamiento()
 {
     int opcion;
-
     cout << "\n=== METODOS DE ORDENAMIENTO ===\n";
     cout << "1. Burbuja\n";
     cout << "2. Seleccion\n";
@@ -44,6 +39,5 @@ int mostrarMenuOrdenamiento()
     cout << "5. MergeSort\n";
     cout << "Seleccione metodo: ";
     cin >> opcion;
-
     return opcion;
 }
