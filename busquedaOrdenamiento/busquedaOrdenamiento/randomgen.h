@@ -20,6 +20,6 @@ std::vector<int> generarConRepetidos(std::size_t size, int minVal, int maxVal, s
 std::vector<int> generarSinRepetidos(std::size_t size, int minVal, int maxVal, std::mt19937& rng);
 
 // 0/ Menú interactivo: pide N/M, tipo de tamaño y modo repetidos/no repetidos y regresa el arreglo.
-std::vector<int> generarArregloInteractivo(int& outN);
+std::vector<int> generarArregloInteractivo_(int& outN);
 
 #endif

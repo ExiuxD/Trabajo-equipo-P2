@@ -97,7 +97,7 @@ std::vector<int> generarSinRepetidos(std::size_t size, int minVal, int maxVal, s
 }
 
 // Menú para que el usuario elija tamaño (N, N*N, N*M) y repetidos/sin repetidos
-std::vector<int> generarArregloInteractivo(int& outN)
+std::vector<int> generarArregloInteractivo_(int& outN)
 {
     static std::random_device rd;
     static std::mt19937 rng(rd());
